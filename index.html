@@ -3,149 +3,123 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>HONOR X6 - Sistema</title>
+<title>Dragons game</title>
 
 <style>
 html,body{
   margin:0;
   padding:0;
   background:black;
-  color:#00ff00;
   font-family:monospace;
+  color:#00ff00;
   height:100%;
   overflow:hidden;
 }
 
 #screen{
   padding:20px;
-  font-size:22px;
-}
-
-.line{
-  margin:8px 0;
+  font-size:26px;
 }
 
 .big{
-  font-size:34px;
+  font-size:40px;
   color:red;
   font-weight:bold;
 }
 
-.progress{
-  color:white;
-}
-
-#exitBlocker{
+#swipeBlocker{
   position:fixed;
   inset:0;
   background:black;
   color:red;
-  display:none;
+  display:flex;
   justify-content:center;
   align-items:center;
-  z-index:9999;
   text-align:center;
+  z-index:9999;
+  flex-direction:column;
 }
 
-#exitBox h1{
-  font-size:42px;
+#swipeBlocker h1{
+  font-size:44px;
+  margin-bottom:20px;
 }
 
-#exitBox p{
-  font-size:24px;
+#swipeBlocker p{
+  font-size:26px;
   color:white;
 }
 
 #counter{
-  font-size:30px;
+  font-size:34px;
   margin-top:20px;
+  color:red;
 }
 </style>
 </head>
 
 <body>
 
-<div id="screen"></div>
+<div id="screen">
+  <div class="big">⚠ ERROR 444</div>
+  <div class="big">v1ru5 det3ctad0</div>
+</div>
 
-<div id="exitBlocker">
-  <div id="exitBox">
-    <h1>🔒 SALIDA BLOQUEADA</h1>
-    <p>Presiona <span id="remaining">30</span> veces para cancelar</p>
-    <div id="counter">0 / 30</div>
-  </div>
+<div id="swipeBlocker">
+  <h1>🔒 SALIDA BLOQUEADA</h1>
+  <p>Desliza <b>30 veces</b> hacia arriba<br>para salir</p>
+  <div id="counter">0 / 30</div>
 </div>
 
 <script>
-const screen = document.getElementById("screen");
+let swipeCount = 0;
+const maxSwipes = 30;
 
-function addLine(text, cls="line"){
-  const div = document.createElement("div");
-  div.className = cls;
-  div.innerHTML = text;
-  screen.appendChild(div);
-  screen.scrollTop = screen.scrollHeight;
+let startY = 0;
+let endY = 0;
+
+function updateCounter(){
+  document.getElementById("counter").innerText =
+    swipeCount + " / " + maxSwipes;
 }
 
-function fakeProgress(text, duration=800){
-  return new Promise(resolve=>{
-    let percent = 0;
-    const div = document.createElement("div");
-    div.className = "line progress";
-    screen.appendChild(div);
+document.addEventListener("touchstart", e=>{
+  startY = e.touches[0].clientY;
+});
 
-    const interval = setInterval(()=>{
-      percent++;
-      div.innerHTML = `${text} ${percent}%`;
+document.addEventListener("touchend", e=>{
+  endY = e.changedTouches[0].clientY;
 
-      if(percent >= 100){
-        clearInterval(interval);
-        resolve();
-      }
-    }, duration/100);
-  });
-}
+  const diff = startY - endY;
 
-async function runTroll(){
+  // Detectar swipe hacia arriba
+  if(diff > 50){
+    swipeCount++;
+    updateCounter();
 
-  addLine("HONOR X6", "big");
-  await fakeProgress("Inicializando sistema...");
-  await fakeProgress("Verificando seguridad...");
-  await fakeProgress("Conectando a servicios...");
-  await fakeProgress("Accediendo al kernel...");
-  
-  addLine(" ", "line");
-  addLine("⚠ ERROR 444", "big");
-  addLine("v1ru5 det3ctad0", "big");
+    if(swipeCount >= maxSwipes){
+      document.getElementById("swipeBlocker").style.display = "none";
 
-  await fakeProgress("Analizando almacenamiento...");
-  await fakeProgress("Obteniendo fotos...");
-  await fakeProgress("Extrayendo contactos...");
-  await fakeProgress("Obteniendo contraseña de Facebook...");
-  await fakeProgress("Obteniendo contraseña de Instagram...");
-  await fakeProgress("Obteniendo contraseña de TikTok...");
-  await fakeProgress("Copiando archivos privados...");
-  await fakeProgress("Subiendo datos a servidor...");
-  await fakeProgress("Inyectando módulos...");
-  await fakeProgress("Intentando recuperación...");
-  await fakeProgress("Recuperación fallida...");
-  await fakeProgress("Bloqueando dispositivo...");
-  
-  addLine(" ", "line");
-  addLine("🔒 DISPOSITIVO COMPROMETIDO", "big");
-  addLine("No apague el teléfono", "big");
+      document.body.innerHTML = `
+        <div style="
+          background:white;
+          color:black;
+          height:100vh;
+          display:flex;
+          justify-content:center;
+          align-items:center;
+          text-align:center;
+          font-size:42px;
+          font-family:sans-serif;">
+          😂 RELÁJATE 😂<br><br>
+          Solo era un troll 😈
+        </div>
+      `;
+    }
+  }
+});
 
-  await fakeProgress("Encriptando datos...");
-  await fakeProgress("Finalizando proceso...");
-  
-  screen.innerHTML = `
-    <div style="background:white;color:black;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;font-size:40px;font-family:sans-serif;">
-      😂 RELÁJATE 😂<br><br>
-      Solo era un troll 😈
-    </div>
-  `;
-}
-
-/* FULLSCREEN insistente */
+/* Fullscreen insistente */
 setInterval(()=>{
   const el = document.documentElement;
   if(el.requestFullscreen && !document.fullscreenElement){
@@ -153,42 +127,16 @@ setInterval(()=>{
   }
 },1000);
 
-/* BLOQUEO botón atrás */
+/* Botón atrás troll */
 history.pushState(null, null, location.href);
 window.onpopstate = function(){
-  showExitBlocker();
   history.go(1);
 };
 
-/* EXIT BLOCKER */
-let taps = 0;
-const maxTaps = 30;
-
-function showExitBlocker(){
-  document.getElementById("exitBlocker").style.display = "flex";
-}
-
-function updateCounter(){
-  document.getElementById("counter").innerText = taps + " / " + maxTaps;
-  document.getElementById("remaining").innerText = maxTaps - taps;
-}
-
-document.getElementById("exitBlocker").addEventListener("click", ()=>{
-  taps++;
-  updateCounter();
-  if(taps >= maxTaps){
-    document.getElementById("exitBlocker").style.display = "none";
-  }
-});
-
 /* Advertencia cerrar */
 window.onbeforeunload = function(){
-  showExitBlocker();
   return "Proceso crítico en curso...";
 };
-
-/* START */
-runTroll();
 </script>
 
 </body>
