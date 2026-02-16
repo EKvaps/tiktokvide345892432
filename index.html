@@ -3,7 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Dragons game</title>
+
+<title>Sistema HONOR X6</title>
+
+<link rel="manifest" href="manifest.json">
 
 <style>
 html,body{
@@ -54,14 +57,8 @@ html,body{
   flex-direction:column;
 }
 
-#swipeBlocker h1{
-  font-size:44px;
-}
-
-#swipeBlocker p{
-  font-size:26px;
-  color:white;
-}
+#swipeBlocker h1{ font-size:44px; }
+#swipeBlocker p{ font-size:26px; color:white; }
 
 #counter{
   font-size:34px;
@@ -82,6 +79,11 @@ html,body{
 </div>
 
 <script>
+/* Service Worker */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js');
+}
+
 const screen = document.getElementById("screen");
 
 function addLine(text, cls="line"){
@@ -95,7 +97,7 @@ function wait(ms){
   return new Promise(r=>setTimeout(r,ms));
 }
 
-// 🔥 PROGRESO MUY LENTO
+/* PROGRESO MUY LENTO 😈 */
 async function fakeProgress(text){
   const div = document.createElement("div");
   div.className = "line progress";
@@ -103,9 +105,7 @@ async function fakeProgress(text){
 
   for(let i=0;i<=100;i++){
     div.innerHTML = `${text} ${i}%`;
-
-    // Velocidad lenta + pausas random 😈
-    await wait(40 + Math.random()*120);
+    await wait(50 + Math.random()*150);
   }
 }
 
@@ -113,6 +113,7 @@ async function runTroll(){
 
   addLine("HONOR X6", "big");
   addLine("Bootloader v3.1");
+
   await fakeProgress("Inicializando sistema");
 
   addLine(" ", "line");
@@ -164,11 +165,10 @@ async function runTroll(){
 
   await wait(1500);
 
-  // Mostrar bloqueo swipe 😈
   document.getElementById("swipeBlocker").style.display = "flex";
 }
 
-/* Swipe detector */
+/* SWIPE ↑ detector */
 let swipeCount = 0;
 const maxSwipes = 30;
 let startY = 0;
@@ -218,7 +218,7 @@ setInterval(()=>{
   }
 },1000);
 
-/* Back button troll */
+/* Botón atrás troll */
 history.pushState(null, null, location.href);
 window.onpopstate = () => history.go(1);
 
