@@ -2,129 +2,131 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>Sistema Android</title>
+<title>System</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#000000">
 
 <style>
     body {
         margin: 0;
-        background: black;
-        color: #00ff00;
+        background: #0b0b0b;
+        font-family: "Segoe UI", sans-serif;
+        color: white;
+    }
+
+    #contenedor { padding: 25px; }
+    #header { font-size: 18px; font-weight: 600; }
+    #sub { color: #aaaaaa; font-size: 13px; margin-bottom: 25px; }
+
+    #log {
         font-family: monospace;
+        font-size: 13px;
+        color: #00ff88;
+        white-space: pre-line;
+        margin-bottom: 25px;
+    }
+
+    #warningBox {
+        background: #1c1c1c;
+        border-radius: 14px;
+        padding: 18px;
+        border: 1px solid #333;
+        margin-top: 10px;
+        display: none;
+    }
+
+    #warningTitle { color: #ff3b3b; font-weight: 600; }
+
+    #barraFondo {
+        width: 100%;
+        height: 8px;
+        background: #2a2a2a;
+        border-radius: 10px;
+        margin-top: 15px;
         overflow: hidden;
     }
 
-    #pantalla {
-        padding: 15px;
-        font-size: 14px;
-        white-space: pre-line;
+    #barra {
+        width: 0%;
+        height: 100%;
+        background: linear-gradient(90deg, #ff3b3b, #ff7a3b);
     }
 
-    .glitch {
-        animation: glitch 0.1s infinite;
-    }
-
-    @keyframes glitch {
-        0% { transform: translate(0); }
-        25% { transform: translate(-2px, 1px); }
-        50% { transform: translate(2px, -1px); }
-        75% { transform: translate(-1px, -2px); }
-        100% { transform: translate(1px, 2px); }
-    }
-
-    .temblor {
-        animation: shake 0.07s infinite;
-    }
-
-    @keyframes shake {
-        0% { transform: translate(1px, 1px); }
-        25% { transform: translate(-1px, -1px); }
-        50% { transform: translate(2px, -1px); }
-        75% { transform: translate(-2px, 1px); }
-        100% { transform: translate(1px, -1px); }
-    }
-
-    .rojo { color: red; }
-    .blanco { color: white; }
-
-    #android {
-        position: fixed;
-        bottom: 10px;
-        right: 10px;
-        width: 85px;
-        opacity: 0;
-        transition: 0.5s;
+    .final {
+        text-align: center;
+        font-size: 20px;
+        margin-top: 40vh;
+        color: #00ffcc;
     }
 </style>
 </head>
 
-<body onclick="cerrarTroll()">
+<body>
 
-<div id="pantalla">Iniciando diagnóstico del sistema...</div>
+<div id="contenedor">
+    <div id="header">HONOR X6</div>
+    <div id="sub">Módulo de seguridad del sistema</div>
 
-<img id="android" src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg">
+    <div id="log">Inicializando diagnóstico...</div>
 
-<audio id="sonido" src="https://www.myinstants.com/media/sounds/glitch-sound.mp3"></audio>
+    <div id="warningBox">
+        <div id="warningTitle">⚠ ERROR 444</div>
+        <div>Actividad inusual detectada.</div>
+
+        <div id="barraFondo">
+            <div id="barra"></div>
+        </div>
+    </div>
+</div>
 
 <script>
-    const pantalla = document.getElementById("pantalla");
-    const android = document.getElementById("android");
-    const sonido = document.getElementById("sonido");
+const log = document.getElementById("log");
+const warningBox = document.getElementById("warningBox");
+const barra = document.getElementById("barra");
 
-    function addLinea(texto, delay) {
-        setTimeout(() => {
-            pantalla.innerHTML += "\n" + texto;
-        }, delay);
-    }
+function linea(texto, delay) {
+    setTimeout(() => log.innerHTML += "\\n" + texto, delay);
+}
 
-    // Secuencia LENTA y tensa
-    addLinea("Verificando integridad del núcleo...", 1200);
-    addLinea("Accediendo a memoria del sistema...", 2600);
-    addLinea("Analizando procesos en segundo plano...", 4200);
-    addLinea("Escaneo profundo en progreso...", 6000);
-    addLinea("0% ▓░░░░░░░░░", 7200);
-    addLinea("12% ▓▓░░░░░░░░", 8800);
-    addLinea("27% ▓▓▓░░░░░░░", 10400);
-    addLinea("41% ▓▓▓▓░░░░░░", 12000);
-    addLinea("⚠ Amenaza potencial detectada ⚠", 13800);
-
+function progreso(delayInicio) {
     setTimeout(() => {
-        pantalla.innerHTML += "\nERROR 444";
-        pantalla.classList.add("rojo");
-        pantalla.classList.add("glitch");
-        sonido.play().catch(() => {});
-    }, 15500);
+        let p = 0;
+        const i = setInterval(() => {
+            p++;
+            barra.style.width = p + "%";
+            if (p >= 100) clearInterval(i);
+        }, 45);
+    }, delayInicio);
+}
 
-    addLinea("v1ru5 det3ctad0...", 17000);
-    addLinea("Intentando aislar amenaza...", 19000);
+// Registrar Service Worker 😈
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js');
+}
 
-    setTimeout(() => {
-        document.body.classList.add("temblor");
-    }, 21000);
+linea("Verificando integridad del sistema...", 1200);
+linea("Analizando almacenamiento interno...", 2600);
+linea("Escaneando aplicaciones instaladas...", 4200);
+linea("Comprobando permisos activos...", 5800);
 
-    addLinea("Error en protocolo de contención", 22500);
-    addLinea("Fallo en reparación automática", 24500);
-    addLinea("Sistema inestable...", 26500);
+setTimeout(() => warningBox.style.display = "block", 7200);
 
-    setTimeout(() => {
-        android.style.opacity = "1";
-    }, 28500);
+linea("Iniciando protocolo de seguridad...", 8200);
+progreso(9000);
 
-    setTimeout(() => {
-        pantalla.innerHTML = "🤖 SISTEMA ANDROID COMPROMETIDO 🤖";
-        pantalla.classList.remove("rojo", "glitch");
-        pantalla.classList.add("blanco");
-        document.body.classList.remove("temblor");
-    }, 31000);
+linea("Recolectando registros...", 11000);
+linea("Analizando comportamiento...", 14000);
+linea("Generando informe...", 17000);
 
-    setTimeout(() => {
-        pantalla.innerHTML = "😂 RELÁJATE 😂\n\nSolo era un troll 😈";
-        pantalla.style.color = "#00ff99";
-    }, 34000);
+setTimeout(() => {
+    document.body.innerHTML =
+        '<div class="final">😂 TRANQUILO 😂<br><br>Solo era un troll 😈</div>';
+}, 21000);
 
-    function cerrarTroll() {
-        pantalla.innerHTML = "";
-        android.style.opacity = "0";
-    }
+setTimeout(() => {
+    window.location.href = "about:blank";
+}, 24000);
 </script>
 
 </body>
