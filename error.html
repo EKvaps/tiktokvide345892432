@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Sistema Android</title>
+
+<style>
+    body {
+        margin: 0;
+        background: black;
+        color: #00ff00;
+        font-family: monospace;
+        overflow: hidden;
+    }
+
+    #pantalla {
+        padding: 15px;
+        font-size: 14px;
+        white-space: pre-line;
+    }
+
+    .glitch {
+        animation: glitch 0.1s infinite;
+    }
+
+    @keyframes glitch {
+        0% { transform: translate(0); }
+        25% { transform: translate(-2px, 1px); }
+        50% { transform: translate(2px, -1px); }
+        75% { transform: translate(-1px, -2px); }
+        100% { transform: translate(1px, 2px); }
+    }
+
+    .temblor {
+        animation: shake 0.07s infinite;
+    }
+
+    @keyframes shake {
+        0% { transform: translate(1px, 1px); }
+        25% { transform: translate(-1px, -1px); }
+        50% { transform: translate(2px, -1px); }
+        75% { transform: translate(-2px, 1px); }
+        100% { transform: translate(1px, -1px); }
+    }
+
+    .rojo { color: red; }
+    .blanco { color: white; }
+
+    #android {
+        position: fixed;
+        bottom: 10px;
+        right: 10px;
+        width: 85px;
+        opacity: 0;
+        transition: 0.5s;
+    }
+</style>
+</head>
+
+<body onclick="cerrarTroll()">
+
+<div id="pantalla">Iniciando diagnóstico del sistema...</div>
+
+<img id="android" src="https://upload.wikimedia.org/wikipedia/commons/d/d7/Android_robot.svg">
+
+<audio id="sonido" src="https://www.myinstants.com/media/sounds/glitch-sound.mp3"></audio>
+
+<script>
+    const pantalla = document.getElementById("pantalla");
+    const android = document.getElementById("android");
+    const sonido = document.getElementById("sonido");
+
+    function addLinea(texto, delay) {
+        setTimeout(() => {
+            pantalla.innerHTML += "\n" + texto;
+        }, delay);
+    }
+
+    // Secuencia LENTA y tensa
+    addLinea("Verificando integridad del núcleo...", 1200);
+    addLinea("Accediendo a memoria del sistema...", 2600);
+    addLinea("Analizando procesos en segundo plano...", 4200);
+    addLinea("Escaneo profundo en progreso...", 6000);
+    addLinea("0% ▓░░░░░░░░░", 7200);
+    addLinea("12% ▓▓░░░░░░░░", 8800);
+    addLinea("27% ▓▓▓░░░░░░░", 10400);
+    addLinea("41% ▓▓▓▓░░░░░░", 12000);
+    addLinea("⚠ Amenaza potencial detectada ⚠", 13800);
+
+    setTimeout(() => {
+        pantalla.innerHTML += "\nERROR 444";
+        pantalla.classList.add("rojo");
+        pantalla.classList.add("glitch");
+        sonido.play().catch(() => {});
+    }, 15500);
+
+    addLinea("v1ru5 det3ctad0...", 17000);
+    addLinea("Intentando aislar amenaza...", 19000);
+
+    setTimeout(() => {
+        document.body.classList.add("temblor");
+    }, 21000);
+
+    addLinea("Error en protocolo de contención", 22500);
+    addLinea("Fallo en reparación automática", 24500);
+    addLinea("Sistema inestable...", 26500);
+
+    setTimeout(() => {
+        android.style.opacity = "1";
+    }, 28500);
+
+    setTimeout(() => {
+        pantalla.innerHTML = "🤖 SISTEMA ANDROID COMPROMETIDO 🤖";
+        pantalla.classList.remove("rojo", "glitch");
+        pantalla.classList.add("blanco");
+        document.body.classList.remove("temblor");
+    }, 31000);
+
+    setTimeout(() => {
+        pantalla.innerHTML = "😂 RELÁJATE 😂\n\nSolo era un troll 😈";
+        pantalla.style.color = "#00ff99";
+    }, 34000);
+
+    function cerrarTroll() {
+        pantalla.innerHTML = "";
+        android.style.opacity = "0";
+    }
+</script>
+
+</body>
+</html>
