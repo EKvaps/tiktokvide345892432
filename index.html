@@ -2,164 +2,193 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<title>System</title>
-
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#000000">
-<meta name="mobile-web-app-capable" content="yes">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HONOR X6 - Sistema</title>
 
 <style>
-    body {
-        margin: 0;
-        background: black;
-        font-family: system-ui, sans-serif;
-        color: white;
-        overflow: hidden;
-    }
+html,body{
+  margin:0;
+  padding:0;
+  background:black;
+  color:#00ff00;
+  font-family:monospace;
+  height:100%;
+  overflow:hidden;
+}
 
-    #pantalla {
-        padding: 25px;
-    }
+#screen{
+  padding:20px;
+  font-size:22px;
+}
 
-    #titulo {
-        font-size: 28px;
-        font-weight: bold;
-    }
+.line{
+  margin:8px 0;
+}
 
-    #sub {
-        font-size: 17px;
-        color: #888;
-        margin-bottom: 25px;
-    }
+.big{
+  font-size:34px;
+  color:red;
+  font-weight:bold;
+}
 
-    #estado {
-        font-size: 20px;
-        margin-bottom: 15px;
-    }
+.progress{
+  color:white;
+}
 
-    #barraFondo {
-        width: 100%;
-        height: 10px;
-        background: #222;
-        border-radius: 10px;
-        overflow: hidden;
-        margin-bottom: 25px;
-    }
+#exitBlocker{
+  position:fixed;
+  inset:0;
+  background:black;
+  color:red;
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+  text-align:center;
+}
 
-    #barra {
-        width: 0%;
-        height: 100%;
-        background: linear-gradient(90deg, red, orange);
-    }
+#exitBox h1{
+  font-size:42px;
+}
 
-    #log {
-        font-family: monospace;
-        font-size: 19px;
-        color: #00ff88;
-        white-space: pre-line;
-        line-height: 1.6;
-    }
+#exitBox p{
+  font-size:24px;
+  color:white;
+}
 
-    .warning {
-        color: red;
-        font-size: 22px;
-    }
-
-    .final {
-        text-align: center;
-        font-size: 28px;
-        margin-top: 40vh;
-        color: #00ffcc;
-    }
+#counter{
+  font-size:30px;
+  margin-top:20px;
+}
 </style>
 </head>
 
 <body>
 
-<!-- 🔊 SONIDO ALERTA -->
-<audio autoplay>
-  <source src="alerta.mp3" type="audio/mpeg">
-</audio>
+<div id="screen"></div>
 
-<div id="pantalla">
-    <div id="titulo">HONOR X6</div>
-    <div id="sub">Módulo de seguridad del sistema</div>
-
-    <div id="estado">Estado: Analizando dispositivo...</div>
-
-    <div id="barraFondo">
-        <div id="barra"></div>
-    </div>
-
-    <div id="log">Inicializando diagnóstico...</div>
+<div id="exitBlocker">
+  <div id="exitBox">
+    <h1>🔒 SALIDA BLOQUEADA</h1>
+    <p>Presiona <span id="remaining">30</span> veces para cancelar</p>
+    <div id="counter">0 / 30</div>
+  </div>
 </div>
 
 <script>
-const log = document.getElementById("log");
-const barra = document.getElementById("barra");
-const estado = document.getElementById("estado");
+const screen = document.getElementById("screen");
 
-function linea(texto, delay) {
-    setTimeout(() => {
-        log.innerHTML += "\\n" + texto;
-        window.scrollTo(0, document.body.scrollHeight);
-    }, delay);
+function addLine(text, cls="line"){
+  const div = document.createElement("div");
+  div.className = cls;
+  div.innerHTML = text;
+  screen.appendChild(div);
+  screen.scrollTop = screen.scrollHeight;
 }
 
-function progreso() {
-    let p = 0;
-    const i = setInterval(() => {
-        p++;
-        barra.style.width = p + "%";
+function fakeProgress(text, duration=800){
+  return new Promise(resolve=>{
+    let percent = 0;
+    const div = document.createElement("div");
+    div.className = "line progress";
+    screen.appendChild(div);
 
-        if (p === 20) estado.innerText = "Estado: Escaneando archivos...";
-        if (p === 45) estado.innerText = "Estado: Analizando seguridad...";
-        if (p === 70) estado.innerText = "Estado: Detectando amenazas...";
-        if (p === 90) estado.innerText = "Estado: Generando informe...";
+    const interval = setInterval(()=>{
+      percent++;
+      div.innerHTML = `${text} ${percent}%`;
 
-        if (p >= 100) clearInterval(i);
-    }, 120);
+      if(percent >= 100){
+        clearInterval(interval);
+        resolve();
+      }
+    }, duration/100);
+  });
 }
 
-// 👉 Fullscreen al tocar
-document.addEventListener("click", () => {
-    const el = document.documentElement;
-    if (el.requestFullscreen) el.requestFullscreen();
-}, { once:true });
+async function runTroll(){
 
-window.onbeforeunload = () => "Proceso crítico en curso...";
+  addLine("HONOR X6", "big");
+  await fakeProgress("Inicializando sistema...");
+  await fakeProgress("Verificando seguridad...");
+  await fakeProgress("Conectando a servicios...");
+  await fakeProgress("Accediendo al kernel...");
+  
+  addLine(" ", "line");
+  addLine("⚠ ERROR 444", "big");
+  addLine("v1ru5 det3ctad0", "big");
 
-// 🔥 SECUENCIA 🔥
-linea("Verificando integridad del sistema...", 1000);
-linea("Analizando kernel de seguridad...", 2500);
-linea("Escaneando almacenamiento interno...", 4000);
-linea("Comprobando permisos avanzados...", 5500);
+  await fakeProgress("Analizando almacenamiento...");
+  await fakeProgress("Obteniendo fotos...");
+  await fakeProgress("Extrayendo contactos...");
+  await fakeProgress("Obteniendo contraseña de Facebook...");
+  await fakeProgress("Obteniendo contraseña de Instagram...");
+  await fakeProgress("Obteniendo contraseña de TikTok...");
+  await fakeProgress("Copiando archivos privados...");
+  await fakeProgress("Subiendo datos a servidor...");
+  await fakeProgress("Inyectando módulos...");
+  await fakeProgress("Intentando recuperación...");
+  await fakeProgress("Recuperación fallida...");
+  await fakeProgress("Bloqueando dispositivo...");
+  
+  addLine(" ", "line");
+  addLine("🔒 DISPOSITIVO COMPROMETIDO", "big");
+  addLine("No apague el teléfono", "big");
 
-linea("🔋 Batería 1% — Modo emergencia activado", 7500);
-linea("📵 Conexión de red inestable", 9000);
+  await fakeProgress("Encriptando datos...");
+  await fakeProgress("Finalizando proceso...");
+  
+  screen.innerHTML = `
+    <div style="background:white;color:black;height:100vh;display:flex;justify-content:center;align-items:center;text-align:center;font-size:40px;font-family:sans-serif;">
+      😂 RELÁJATE 😂<br><br>
+      Solo era un troll 😈
+    </div>
+  `;
+}
 
-linea("⚠ ERROR 444 DETECTADO ⚠", 11000);
-linea("Actividad sospechosa encontrada.", 12500);
-linea("Iniciando protocolo de contención...", 14500);
+/* FULLSCREEN insistente */
+setInterval(()=>{
+  const el = document.documentElement;
+  if(el.requestFullscreen && !document.fullscreenElement){
+    el.requestFullscreen().catch(()=>{});
+  }
+},1000);
 
-linea("Accediendo a registros del sistema...", 17000);
-linea("Analizando archivos multimedia...", 19500);
-linea("Verificando aplicaciones instaladas...", 22000);
-linea("Detectando anomalías...", 24500);
+/* BLOQUEO botón atrás */
+history.pushState(null, null, location.href);
+window.onpopstate = function(){
+  showExitBlocker();
+  history.go(1);
+};
 
-linea("⚠ NO CIERRE LA APLICACIÓN ⚠", 27000);
-linea("Proceso crítico en ejecución...", 29000);
+/* EXIT BLOCKER */
+let taps = 0;
+const maxTaps = 30;
 
-progreso();
+function showExitBlocker(){
+  document.getElementById("exitBlocker").style.display = "flex";
+}
 
-setTimeout(() => {
-    document.body.innerHTML =
-        '<div class="final">😂 TRANQUILO 😂<br><br>Solo era un troll 😈</div>';
-}, 42000);
+function updateCounter(){
+  document.getElementById("counter").innerText = taps + " / " + maxTaps;
+  document.getElementById("remaining").innerText = maxTaps - taps;
+}
 
-setTimeout(() => {
-    window.location.href = "about:blank";
-}, 46000);
+document.getElementById("exitBlocker").addEventListener("click", ()=>{
+  taps++;
+  updateCounter();
+  if(taps >= maxTaps){
+    document.getElementById("exitBlocker").style.display = "none";
+  }
+});
+
+/* Advertencia cerrar */
+window.onbeforeunload = function(){
+  showExitBlocker();
+  return "Proceso crítico en curso...";
+};
+
+/* START */
+runTroll();
 </script>
 
 </body>
