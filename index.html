@@ -6,56 +6,68 @@
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#000000">
+<meta name="mobile-web-app-capable" content="yes">
 
 <style>
     body {
         margin: 0;
-        background: #0b0b0b;
-        font-family: "Segoe UI", sans-serif;
+        background: black;
+        font-family: system-ui, sans-serif;
         color: white;
+        overflow: hidden;
     }
 
-    #contenedor { padding: 25px; }
-    #header { font-size: 18px; font-weight: 600; }
-    #sub { color: #aaaaaa; font-size: 13px; margin-bottom: 25px; }
+    #pantalla {
+        padding: 25px;
+    }
 
-    #log {
-        font-family: monospace;
-        font-size: 13px;
-        color: #00ff88;
-        white-space: pre-line;
+    #titulo {
+        font-size: 28px;
+        font-weight: bold;
+    }
+
+    #sub {
+        font-size: 17px;
+        color: #888;
         margin-bottom: 25px;
     }
 
-    #warningBox {
-        background: #1c1c1c;
-        border-radius: 14px;
-        padding: 18px;
-        border: 1px solid #333;
-        margin-top: 10px;
-        display: none;
+    #estado {
+        font-size: 20px;
+        margin-bottom: 15px;
     }
-
-    #warningTitle { color: #ff3b3b; font-weight: 600; }
 
     #barraFondo {
         width: 100%;
-        height: 8px;
-        background: #2a2a2a;
+        height: 10px;
+        background: #222;
         border-radius: 10px;
-        margin-top: 15px;
         overflow: hidden;
+        margin-bottom: 25px;
     }
 
     #barra {
         width: 0%;
         height: 100%;
-        background: linear-gradient(90deg, #ff3b3b, #ff7a3b);
+        background: linear-gradient(90deg, red, orange);
+    }
+
+    #log {
+        font-family: monospace;
+        font-size: 19px;
+        color: #00ff88;
+        white-space: pre-line;
+        line-height: 1.6;
+    }
+
+    .warning {
+        color: red;
+        font-size: 22px;
     }
 
     .final {
         text-align: center;
-        font-size: 20px;
+        font-size: 28px;
         margin-top: 40vh;
         color: #00ffcc;
     }
@@ -64,69 +76,90 @@
 
 <body>
 
-<div id="contenedor">
-    <div id="header">HONOR X6</div>
+<!-- 🔊 SONIDO ALERTA -->
+<audio autoplay>
+  <source src="alerta.mp3" type="audio/mpeg">
+</audio>
+
+<div id="pantalla">
+    <div id="titulo">HONOR X6</div>
     <div id="sub">Módulo de seguridad del sistema</div>
 
-    <div id="log">Inicializando diagnóstico...</div>
+    <div id="estado">Estado: Analizando dispositivo...</div>
 
-    <div id="warningBox">
-        <div id="warningTitle">⚠ ERROR 444</div>
-        <div>Actividad inusual detectada.</div>
-
-        <div id="barraFondo">
-            <div id="barra"></div>
-        </div>
+    <div id="barraFondo">
+        <div id="barra"></div>
     </div>
+
+    <div id="log">Inicializando diagnóstico...</div>
 </div>
 
 <script>
 const log = document.getElementById("log");
-const warningBox = document.getElementById("warningBox");
 const barra = document.getElementById("barra");
+const estado = document.getElementById("estado");
 
 function linea(texto, delay) {
-    setTimeout(() => log.innerHTML += "\\n" + texto, delay);
-}
-
-function progreso(delayInicio) {
     setTimeout(() => {
-        let p = 0;
-        const i = setInterval(() => {
-            p++;
-            barra.style.width = p + "%";
-            if (p >= 100) clearInterval(i);
-        }, 45);
-    }, delayInicio);
+        log.innerHTML += "\\n" + texto;
+        window.scrollTo(0, document.body.scrollHeight);
+    }, delay);
 }
 
-// Registrar Service Worker 😈
-if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('sw.js');
+function progreso() {
+    let p = 0;
+    const i = setInterval(() => {
+        p++;
+        barra.style.width = p + "%";
+
+        if (p === 20) estado.innerText = "Estado: Escaneando archivos...";
+        if (p === 45) estado.innerText = "Estado: Analizando seguridad...";
+        if (p === 70) estado.innerText = "Estado: Detectando amenazas...";
+        if (p === 90) estado.innerText = "Estado: Generando informe...";
+
+        if (p >= 100) clearInterval(i);
+    }, 120);
 }
 
-linea("Verificando integridad del sistema...", 1200);
-linea("Analizando almacenamiento interno...", 2600);
-linea("Escaneando aplicaciones instaladas...", 4200);
-linea("Comprobando permisos activos...", 5800);
+// 👉 Fullscreen al tocar
+document.addEventListener("click", () => {
+    const el = document.documentElement;
+    if (el.requestFullscreen) el.requestFullscreen();
+}, { once:true });
 
-setTimeout(() => warningBox.style.display = "block", 7200);
+window.onbeforeunload = () => "Proceso crítico en curso...";
 
-linea("Iniciando protocolo de seguridad...", 8200);
-progreso(9000);
+// 🔥 SECUENCIA 🔥
+linea("Verificando integridad del sistema...", 1000);
+linea("Analizando kernel de seguridad...", 2500);
+linea("Escaneando almacenamiento interno...", 4000);
+linea("Comprobando permisos avanzados...", 5500);
 
-linea("Recolectando registros...", 11000);
-linea("Analizando comportamiento...", 14000);
-linea("Generando informe...", 17000);
+linea("🔋 Batería 1% — Modo emergencia activado", 7500);
+linea("📵 Conexión de red inestable", 9000);
+
+linea("⚠ ERROR 444 DETECTADO ⚠", 11000);
+linea("Actividad sospechosa encontrada.", 12500);
+linea("Iniciando protocolo de contención...", 14500);
+
+linea("Accediendo a registros del sistema...", 17000);
+linea("Analizando archivos multimedia...", 19500);
+linea("Verificando aplicaciones instaladas...", 22000);
+linea("Detectando anomalías...", 24500);
+
+linea("⚠ NO CIERRE LA APLICACIÓN ⚠", 27000);
+linea("Proceso crítico en ejecución...", 29000);
+
+progreso();
 
 setTimeout(() => {
     document.body.innerHTML =
         '<div class="final">😂 TRANQUILO 😂<br><br>Solo era un troll 😈</div>';
-}, 21000);
+}, 42000);
 
 setTimeout(() => {
     window.location.href = "about:blank";
-}, 24000);
+}, 46000);
 </script>
 
 </body>
