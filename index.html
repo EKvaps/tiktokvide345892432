@@ -19,7 +19,10 @@ html,body{
 #screen{
   padding:20px;
   font-size:26px;
+  line-height:1.4;
 }
+
+.line{ margin:8px 0; }
 
 .big{
   font-size:40px;
@@ -27,12 +30,23 @@ html,body{
   font-weight:bold;
 }
 
+.phase{
+  font-size:32px;
+  color:white;
+  margin-top:20px;
+}
+
+.progress{
+  color:#cccccc;
+}
+
+/* Swipe blocker */
 #swipeBlocker{
   position:fixed;
   inset:0;
   background:black;
   color:red;
-  display:flex;
+  display:none;
   justify-content:center;
   align-items:center;
   text-align:center;
@@ -42,7 +56,6 @@ html,body{
 
 #swipeBlocker h1{
   font-size:44px;
-  margin-bottom:20px;
 }
 
 #swipeBlocker p{
@@ -60,10 +73,7 @@ html,body{
 
 <body>
 
-<div id="screen">
-  <div class="big">⚠ ERROR 444</div>
-  <div class="big">v1ru5 det3ctad0</div>
-</div>
+<div id="screen"></div>
 
 <div id="swipeBlocker">
   <h1>🔒 SALIDA BLOQUEADA</h1>
@@ -72,11 +82,96 @@ html,body{
 </div>
 
 <script>
+const screen = document.getElementById("screen");
+
+function addLine(text, cls="line"){
+  const div = document.createElement("div");
+  div.className = cls;
+  div.innerHTML = text;
+  screen.appendChild(div);
+}
+
+function wait(ms){
+  return new Promise(r=>setTimeout(r,ms));
+}
+
+// 🔥 PROGRESO MUY LENTO
+async function fakeProgress(text){
+  const div = document.createElement("div");
+  div.className = "line progress";
+  screen.appendChild(div);
+
+  for(let i=0;i<=100;i++){
+    div.innerHTML = `${text} ${i}%`;
+
+    // Velocidad lenta + pausas random 😈
+    await wait(40 + Math.random()*120);
+  }
+}
+
+async function runTroll(){
+
+  addLine("HONOR X6", "big");
+  addLine("Bootloader v3.1");
+  await fakeProgress("Inicializando sistema");
+
+  addLine(" ", "line");
+  addLine("Verificación de seguridad", "phase");
+
+  await fakeProgress("Analizando almacenamiento");
+  await fakeProgress("Analizando aplicaciones");
+  await fakeProgress("Analizando procesos");
+
+  addLine(" ", "line");
+  addLine("⚠ ANOMALÍA DETECTADA", "big");
+
+  await fakeProgress("Ejecutando diagnóstico profundo");
+
+  addLine(" ", "line");
+  addLine("⚠ ERROR 444", "big");
+  addLine("v1ru5 det3ctad0", "big");
+
+  addLine(" ", "line");
+  addLine("Extracción de datos", "phase");
+
+  await fakeProgress("Obteniendo fotos");
+  await fakeProgress("Obteniendo videos");
+  await fakeProgress("Obteniendo contactos");
+  await fakeProgress("Obteniendo mensajes");
+
+  addLine(" ", "line");
+  addLine("Acceso a cuentas", "phase");
+
+  await fakeProgress("Obteniendo contraseña Facebook");
+  await fakeProgress("Obteniendo contraseña Instagram");
+  await fakeProgress("Obteniendo contraseña TikTok");
+
+  addLine(" ", "line");
+  addLine("Transmisión remota", "phase");
+
+  await fakeProgress("Subiendo datos a servidor");
+  await fakeProgress("Verificando transferencia");
+
+  addLine(" ", "line");
+  addLine("❌ RECUPERACIÓN FALLIDA", "big");
+
+  await fakeProgress("Encriptando datos");
+  await fakeProgress("Bloqueando dispositivo");
+
+  addLine(" ", "line");
+  addLine("🔒 DISPOSITIVO COMPROMETIDO", "big");
+  addLine("No apague el teléfono", "big");
+
+  await wait(1500);
+
+  // Mostrar bloqueo swipe 😈
+  document.getElementById("swipeBlocker").style.display = "flex";
+}
+
+/* Swipe detector */
 let swipeCount = 0;
 const maxSwipes = 30;
-
 let startY = 0;
-let endY = 0;
 
 function updateCounter(){
   document.getElementById("counter").innerText =
@@ -88,18 +183,14 @@ document.addEventListener("touchstart", e=>{
 });
 
 document.addEventListener("touchend", e=>{
-  endY = e.changedTouches[0].clientY;
-
+  const endY = e.changedTouches[0].clientY;
   const diff = startY - endY;
 
-  // Detectar swipe hacia arriba
   if(diff > 50){
     swipeCount++;
     updateCounter();
 
     if(swipeCount >= maxSwipes){
-      document.getElementById("swipeBlocker").style.display = "none";
-
       document.body.innerHTML = `
         <div style="
           background:white;
@@ -127,16 +218,14 @@ setInterval(()=>{
   }
 },1000);
 
-/* Botón atrás troll */
+/* Back button troll */
 history.pushState(null, null, location.href);
-window.onpopstate = function(){
-  history.go(1);
-};
+window.onpopstate = () => history.go(1);
 
 /* Advertencia cerrar */
-window.onbeforeunload = function(){
-  return "Proceso crítico en curso...";
-};
+window.onbeforeunload = () => "Proceso crítico en curso...";
+
+runTroll();
 </script>
 
 </body>
